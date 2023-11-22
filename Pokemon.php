@@ -8,18 +8,31 @@ class Pokemon
     private string $name;
     private string $description;
     private string $image;
-    private string $type1;
-    private string $type2;
 
     // Méthodes
-    public function __construct(int $number, string $name, string $description, string $image, string $type1, string $type2 = "")
+    public function __construct(array $data)
     {
-        $this->number = $number;
-        $this->name = $name;
-        $this->description = $description;
-        $this->image = $image;
-        $this->type1 = $type1;
-        $this->type2 = $type2;
+        $this->hydrate($data);
+    }
+
+    /*
+    $data = [
+        "id" => 1,
+        "number" => 25,
+        "name" => "Pikachu",
+        "description" => "Pika Pika",
+        "image" => "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" 
+     ]
+     */
+
+    public function hydrate(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            $method = 'set' . ucfirst($key); // setId, setNumber, setName, setDescription, setImage
+            if (method_exists($this, $method)) {
+                $this->$method($value); // setId(1), setNumber(25), setName("Pikachu"), setDescription("Pika Pika"), setImage("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png")
+            }
+        }
     }
 
     public function getName(): string
@@ -29,9 +42,7 @@ class Pokemon
 
     public function setName(string $name): self
     {
-        if ($name !== "" && strlen($name) < 50) {
-            $this->name = $name;
-        }
+        $this->name = $name;
         return $this;
     }
 
@@ -48,17 +59,6 @@ class Pokemon
     public function getImage()
     {
         return $this->image;
-    }
-
-    public function getType1()
-    {
-        return $this->type1;
-    }
-
-
-    public function getType2()
-    {
-        return $this->type2;
     }
 
     public function getId()
@@ -90,20 +90,4 @@ class Pokemon
         $this->image = $image;
         return $this;
     }
-
-    public function setType1($type1)
-    {
-        $this->type1 = $type1;
-        return $this;
-    }
-
-    public function setType2($type2)
-    {
-        $this->type2 = $type2;
-        return $this;
-    }
 }
-
-/* $pikachu = new Pokemon();
-
-echo $pikachu->attack(); */
